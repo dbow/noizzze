@@ -18,23 +18,12 @@ MUVANT.Canvas = (function () {
       
       if (Modernizr.canvas) {
 
-        // removeArrow is 35x60px.  addArrow is 35x50px.
-        var removeCanvas = document.getElementById('removeArrow'),
-            addCanvas = document.getElementById('addArrow'),
-            removeCtx = removeCanvas.getContext('2d'),
-            addCtx = addCanvas.getContext('2d');
+        // addArrow is 35x50px. removeArrow is 35x60px.
+        var addCanvas = document.getElementById('addArrow'),
+            removeCanvas = document.getElementById('removeArrow'),
+            addCtx = addCanvas.getContext('2d'),
+            removeCtx = removeCanvas.getContext('2d');
 
-        removeCtx.fillStyle = "black";        
-        removeCtx.beginPath();
-        removeCtx.moveTo(35, 5);
-        removeCtx.lineWidth = 8;
-        removeCtx.quadraticCurveTo(15, 0, 15, 47);
-        removeCtx.moveTo(11, 55);
-        removeCtx.lineTo(25, 40);
-        removeCtx.moveTo(15, 55);
-        removeCtx.lineTo(5, 40);
-        removeCtx.stroke();
-        
         addCtx.fillStyle = "black";        
         addCtx.beginPath();
         addCtx.moveTo(30, 50);
@@ -45,7 +34,18 @@ MUVANT.Canvas = (function () {
         addCtx.moveTo(17, 5);
         addCtx.lineTo(5, 20);
         addCtx.stroke();
-        
+
+        removeCtx.fillStyle = "black";        
+        removeCtx.beginPath();
+        removeCtx.moveTo(0, 5);
+        removeCtx.lineWidth = 8;
+        removeCtx.quadraticCurveTo(20, 0, 20, 47);
+        removeCtx.moveTo(24, 55);
+        removeCtx.lineTo(10, 40);
+        removeCtx.moveTo(20, 55);
+        removeCtx.lineTo(30, 40);
+        removeCtx.stroke();
+
       } else {
         log('no canvas');
       }
@@ -78,6 +78,17 @@ MUVANT.Canvas = (function () {
 MUVANT.Init = (function () {
 
     var me = {};
+    
+    me.updateDrag = function (element) {
+      if (element.hasClass('musicFileAdded')) {
+        element.draggable("option", "revert", false)
+               .draggable("option", "snap", false);
+      } else {
+        element.draggable("option", "revert", "invalid")
+               .draggable("option", "snap", "#soundBox")
+               .draggable("option", "snapMode", "inner");
+      }
+    }
 
     /**
      * MUVANT.Init.setupDraggable
@@ -86,19 +97,25 @@ MUVANT.Init = (function () {
      */
     me.setupDraggable = function () {
 
-      $('.musicFile').draggable({ revert: "invalid" });
+      $('.musicFile').draggable({revert: "invalid",
+                                 snap: "#soundBox",
+                                 snapMode: "inner"});
+
       $('#soundBox').droppable({
         hoverClass: "soundBoxHover",
+        tolerance: 'touch',
   			drop: function(event, ui) {
-    		  log(ui);
+    		  ui.draggable.addClass('musicFileAdded');
+    		  me.updateDrag(ui.draggable);
     		}
   		});
-      $('#removeBox').droppable({
+  		/*
+      $('#addBox').droppable({
         hoverClass: "soundBoxHover",
   			drop: function(event, ui) {
     			log(ui);
     		}
-  		});
+  		});*/
     };
 
     return me;

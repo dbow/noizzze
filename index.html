@@ -10,6 +10,7 @@
 
 	<meta name="viewport" content="width=device-width,initial-scale=1">
 
+	<link rel="stylesheet" href="css/boilerplate.css">
 	<link rel="stylesheet" href="css/style.css">
 
 	<script src="js/libs/modernizr-2.0.6.min.js"></script>
@@ -32,21 +33,14 @@
 		<div id="soundBox"></div>
 
 		<div id="arrowBoxes">
-			<canvas id="removeArrow" width="35" height="60"></canvas>
 			<canvas id="addArrow" width="35" height="50"></canvas>
+			<canvas id="removeArrow" width="35" height="60"></canvas>
 		</div>
 
-		<div id="fileBoxes" class="clearfix">
-			<div id="removeContainer" class="fileContainer">
-				<div id="removeBox">
-					<h4>drag files here to <span class="mainInstruction">Remove</span></h4>
-				</div>
-			</div>
-			<div id="addContainer" class="fileContainer">
-				<h4>drag files here to <span class="mainInstruction">Add</span></h4>
-				<div id="addBox">
-					<div class="musicFile">sample file</div>
-				</div>
+		<div id="addContainer">
+			<h4>drag files here to <span class="mainInstruction">Add</span> or <span class="mainInstruction">Remove</span></h4>
+			<div id="addBox">
+				<div class="musicFile">sample file</div>
 			</div>
 		</div>
 
