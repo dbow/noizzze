@@ -202,7 +202,7 @@ table { border-collapse: collapse; border-spacing: 0; }
    ========================================================================== */
 
 header {
-  width: 300px;
+  width: 240px;
   margin: 0 auto;
 } 
 
@@ -220,6 +220,10 @@ header div {
   width: 600px;
   margin: 0 auto;
 }
+
+  .soundBoxHover {
+    background-color: #999;
+  }
 
 #arrowBoxes {
   height: 65px;

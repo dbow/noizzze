@@ -71,8 +71,44 @@ MUVANT.Canvas = (function () {
 }());
 
 
+/**
+ * MUVANT.Init
+ * 
+ */
+MUVANT.Init = (function () {
+
+    var me = {};
+
+    /**
+     * MUVANT.Init.setupDraggable
+     * Initializes the draggable and droppable jQuery UI functionality
+     * on the soundBox and removeBox.
+     */
+    me.setupDraggable = function () {
+
+      $('.musicFile').draggable({ revert: "invalid" });
+      $('#soundBox').droppable({
+        hoverClass: "soundBoxHover",
+  			drop: function(event, ui) {
+    		  log(ui);
+    		}
+  		});
+      $('#removeBox').droppable({
+        hoverClass: "soundBoxHover",
+  			drop: function(event, ui) {
+    			log(ui);
+    		}
+  		});
+    };
+
+    return me;
+
+}());
+
+
 $(function () {
 
+  MUVANT.Init.setupDraggable();
   MUVANT.Canvas.setup();
 
 });
