@@ -1,13 +1,13 @@
-var MUVANT = {};
+var NOIZZZE = {};
 
 (function () {
 
 
 /**
- * MUVANT.Audio
+ * NOIZZZE.Audio
  * 
  */
-MUVANT.Audio = (function () {
+NOIZZZE.Audio = (function () {
 
     var me = {},
         context,
@@ -21,7 +21,7 @@ MUVANT.Audio = (function () {
         sourceObject = {};
 
     /**
-     * MUVANT.Audio.setup
+     * NOIZZZE.Audio.setup
      * 
      */
     me.setup = function () {
@@ -43,7 +43,7 @@ MUVANT.Audio = (function () {
     };
 
     /**
-     * MUVANT.Audio.loadSound
+     * NOIZZZE.Audio.loadSound
      * 
      */
     me.loadSound = function (soundUrl, context) {
@@ -66,7 +66,7 @@ MUVANT.Audio = (function () {
     };
 
     /**
-     * MUVANT.Audio.handleBuffer
+     * NOIZZZE.Audio.handleBuffer
      * 
      */
     me.handleBuffer = function (buffer, name) {
@@ -75,12 +75,12 @@ MUVANT.Audio = (function () {
 
       bufferObject[name] = buffer;
       $('#addBox').append(newElement);
-      MUVANT.Drag.enableDrag();
+      NOIZZZE.Drag.enableDrag();
 
     };
 
     /**
-     * MUVANT.Audio.play
+     * NOIZZZE.Audio.play
      * 
      */
     me.play = function(name) {
@@ -99,7 +99,7 @@ MUVANT.Audio = (function () {
     };
 
     /**
-     * MUVANT.Audio.stop
+     * NOIZZZE.Audio.stop
      * 
      */
     me.stop = function(name) {
@@ -111,7 +111,7 @@ MUVANT.Audio = (function () {
     };
 
     /**
-     * MUVANT.Audio.update
+     * NOIZZZE.Audio.update
      * 
      */
     me.update = function (operation, element) {
@@ -130,15 +130,15 @@ MUVANT.Audio = (function () {
 
 
 /**
- * MUVANT.Canvas
+ * NOIZZZE.Canvas
  * Constructs the arrows in the UI using HTML5 Canvas.
  */
-MUVANT.Canvas = (function () {
+NOIZZZE.Canvas = (function () {
 
     var me = {};
 
     /**
-     * MUVANT.Canvas.setup
+     * NOIZZZE.Canvas.setup
      * Creates arrows in the two canvas tags.
      */
     me.setup = function () {
@@ -185,15 +185,15 @@ MUVANT.Canvas = (function () {
 
 
 /**
- * MUVANT.Drag
+ * NOIZZZE.Drag
  * Sets up and handles the drag and drop functionality.
  */
-MUVANT.Drag = (function () {
+NOIZZZE.Drag = (function () {
 
     var me = {};
     
     /**
-     * MUVANT.Drag.setupDraggable
+     * NOIZZZE.Drag.setupDraggable
      * Initializes the draggable and droppable jQuery UI functionality
      * on the musicFile elements and soundbox.
      */
@@ -219,7 +219,7 @@ MUVANT.Drag = (function () {
     };
 
     /**
-     * MUVANT.Drag.watchForExit
+     * NOIZZZE.Drag.watchForExit
      * Checks if the file ends up in the soundBox or not.  If not,
      * calls updateDrag on the element.
      */
@@ -239,7 +239,7 @@ MUVANT.Drag = (function () {
     };
 
     /**
-     * MUVANT.Drag.updateDrag
+     * NOIZZZE.Drag.updateDrag
      * Updates the element's draggable and positioning based on whether
      * it's in the soundBox or not.
      */
@@ -248,7 +248,7 @@ MUVANT.Drag = (function () {
       if (element.hasClass('musicFileAdded')) {
         element.draggable('option', 'revert', false)
                .draggable('option', 'snap', false);
-        MUVANT.Audio.update('add', element);
+        NOIZZZE.Audio.update('add', element);
       } else {
         element.draggable('option', 'revert', 'invalid')
                .draggable('option', 'snap', '#soundBox')
@@ -257,7 +257,7 @@ MUVANT.Drag = (function () {
                .css('top', 'auto')
                .css('left', 'auto')
                .css('position', 'relative');
-        MUVANT.Audio.update('remove', element);
+        NOIZZZE.Audio.update('remove', element);
       }
 
     };
@@ -281,9 +281,9 @@ MUVANT.Drag = (function () {
 
 $(function () {
 
-  MUVANT.Drag.setup();
-  MUVANT.Canvas.setup();
-  MUVANT.Audio.setup();
+  NOIZZZE.Drag.setup();
+  NOIZZZE.Canvas.setup();
+  NOIZZZE.Audio.setup();
 
 });
 
