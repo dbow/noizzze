@@ -2,6 +2,73 @@ var MUVANT = {};
 
 (function () {
 
+
+/**
+ * MUVANT.Audio
+ * 
+ */
+MUVANT.Audio = (function () {
+
+    var me = {};
+
+    /**
+     * MUVANT.Audio.setup
+     * 
+     */
+    me.setup = function () {
+      
+      var context,
+          testUrl = 'crickets.mp3',
+          request;
+      
+      try {
+        context = new webkitAudioContext();
+      }
+      catch(e) {
+        // TODO(dbow): better error handling as this is real browser specific.
+        alert('Web Audio API is not supported in this browser');
+      }
+      
+      // TODO(dbow): After testing complete, update with real functionality.
+
+      var playSound = function (buffer) {
+        log('playSound');
+        var source = context.createBufferSource(); // creates a sound source
+        source.buffer = buffer;                    // tell the source which sound to play
+        source.connect(context.destination);       // connect the source to the context's destination (the speakers)
+        source.noteOn(0);                          // play the source now
+      }
+      log(context);
+      request = new XMLHttpRequest();
+      request.open('GET', testUrl, true);
+      request.responseType = 'arraybuffer';
+
+      // Decode asynchronously
+      request.onload = function() {
+        log('request.onload');
+        log(request.response);
+        context.decodeAudioData(request.response, function(buffer) {
+          log('decodeAudioData');
+          playSound(buffer);
+        }, function(e) {
+          log(e);
+        });
+      }
+
+      request.send();
+
+    };
+    
+    me.update = function (operation, element) {
+      log(operation);
+      log(element);
+    };
+
+    return me;
+
+}());
+
+
 /**
  * MUVANT.Canvas
  * Constructs the arrows in the UI using HTML5 Canvas.
@@ -51,20 +118,6 @@ MUVANT.Canvas = (function () {
       }
       
     };
-    
-
-    /**
-     * MUVANT.Canvas.convertRadians
-     * Utility function to convert degrees to radians.
-     * @param {number} degrees The degree value to convert to radians.
-     * @return {number} radians The equivalent radians to the provided degrees.
-     */
-    me.convertRadians = function (degrees) {
-
-      var radians = (Math.PI/180)*degrees;
-      return radians;
-
-    };
 
     return me;
 
@@ -84,7 +137,7 @@ MUVANT.Drag = (function () {
      * Initializes the draggable and droppable jQuery UI functionality
      * on the musicFile elements and soundbox.
      */
-    me.setupDraggable = function () {
+    me.setup = function () {
 
       $('.musicFile').draggable({revert: 'invalid',
                                  snap: '#soundBox',
@@ -116,12 +169,13 @@ MUVANT.Drag = (function () {
      */
     me.watchForExit = function (element) {
 
-      element.on("dragstop", function(event, ui) {
+      element.on('dragstop', function(event, ui) {
 
         var dragElement = ui.helper;
 
         if (!dragElement.hasClass('musicFileAdded')) {
           me.updateDrag(dragElement);
+          element.off('dragstop');
         }
 
       });
@@ -138,6 +192,7 @@ MUVANT.Drag = (function () {
       if (element.hasClass('musicFileAdded')) {
         element.draggable('option', 'revert', false)
                .draggable('option', 'snap', false);
+        MUVANT.Audio.update('add', element);
       } else {
         element.draggable('option', 'revert', 'invalid')
                .draggable('option', 'snap', '#soundBox')
@@ -146,6 +201,7 @@ MUVANT.Drag = (function () {
                .css('top', 'auto')
                .css('left', 'auto')
                .css('position', 'relative');
+        MUVANT.Audio.update('remove', element);
       }
 
     };
@@ -157,8 +213,9 @@ MUVANT.Drag = (function () {
 
 $(function () {
 
-  MUVANT.Drag.setupDraggable();
+  MUVANT.Drag.setup();
   MUVANT.Canvas.setup();
+  MUVANT.Audio.setup();
 
 });
 
