@@ -17,7 +17,8 @@ MUVANT.Audio = (function () {
                       'elementary_school.mp3',
                       'chill_song.mp3'],
         soundLen = soundArray.length,
-        bufferObject = {};
+        bufferObject = {},
+        sourceObject = {};
 
     /**
      * MUVANT.Audio.setup
@@ -77,12 +78,22 @@ MUVANT.Audio = (function () {
       source.buffer = buffer;                    // tell the source which sound to play
       source.connect(context.destination);       // connect the source to the context's destination (the speakers)
       source.noteOn(0);                          // play the source now
+      sourceObject[name] = source;
 
+    };
+    
+    me.stop = function(name) {
+      
+      var source = sourceObject[name];
+      source.noteOff(0);
+      
     };
     
     me.update = function (operation, element) {
       if (operation === 'add') {
         me.play(element.text());
+      } else {
+        me.stop(element.text());
       }
     };
 
