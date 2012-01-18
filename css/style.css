@@ -13,7 +13,7 @@ header div {
 }
 
   #pageSubHeader {
-    margin: 10px 0px 0px 10px;
+    margin: 10px 10px 0px 0px;
   }
 
 #soundBox {
@@ -83,3 +83,53 @@ header div {
       .musicFileAdded {
         background-color: #66CC99;
       }
+    
+    .musicFilePanel {
+      width: 180px;
+      height: 200px;
+      border: 1px solid #333;
+      position: absolute;
+      left: 50%;
+      margin-left: -90px;
+      top: 20px;
+      background-color: #FF9966;
+      z-index: 15;
+    }
+      
+      .hidden {
+        display: none;
+      }
+      
+      .controls1 {
+        height: 50px;
+        width: 180px;
+      }
+
+      .controls1 input, .controls1 div {
+        float: left;
+      }
+
+        .loopControl {
+          width: 90px;
+        }
+      
+        .volumeControl {
+          width: 90px;
+        }
+      
+      .controls2 {
+        height: 100px;
+        width: 180px;
+      }
+
+      .controls2 div {
+        display: block;
+      }
+
+        .delayControl {
+          height: 50px;
+        }
+      
+        .warpControl {
+          height: 50px;
+        }

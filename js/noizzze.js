@@ -18,6 +18,8 @@ NOIZZZE.Audio = (function () {
                       'chill_song.mp3'],
         soundLen = soundArray.length,
         bufferObject = {},
+        gainObject = {},
+        warpObject = {},
         sourceObject = {};
 
     /**
@@ -56,6 +58,7 @@ NOIZZZE.Audio = (function () {
       // Decode asynchronously
       request.onload = function() {
         context.decodeAudioData(request.response, function(buffer) {
+          bufferObject[soundUrl] = buffer;
           me.handleBuffer(buffer, soundUrl);
           }, function(e) {
             log(e);
@@ -71,9 +74,21 @@ NOIZZZE.Audio = (function () {
      */
     me.handleBuffer = function (buffer, name) {
 
-      var newElement = '<div class="musicFile">' + name + '</div>';
+      var panelElement = '<div class="musicFilePanel hidden">' + 
+                           '<h2>' + name + '</h2>' +
+                           '<div class="controls1">' +
+                             '<input type="checkbox" class="loopControl">loop</input>' + 
+                             '<div class="volumeControl"></div>' +
+                           '</div>' +
+                           '<div class="controls2">' +
+                             '<div class="delayControl"></div>' +
+                             '<div class="warpControl"></div>' +
+                          '</div>' +
+                        '</div>',
+          newElement = '<div class="musicFile" id="' + name + '">' +
+                       name + panelElement + '</div>';
 
-      bufferObject[name] = buffer;
+
       $('#addBox').append(newElement);
       NOIZZZE.Drag.enableDrag();
 
@@ -86,12 +101,18 @@ NOIZZZE.Audio = (function () {
     me.play = function(name) {
 
       var buffer = bufferObject[name],
-          source;
+          source,
+          gainNode;
 
+      log(name);
+      log(sourceObject);
       if (!sourceObject[name]) {
         source = context.createBufferSource();
         source.buffer = buffer;
-        source.connect(context.destination);
+        gainNode = context.createGainNode();
+        gainObject[name] = gainNode;
+        source.connect(gainNode);
+        gainNode.connect(context.destination);
         source.noteOn(0);
         sourceObject[name] = source;
       }
@@ -109,6 +130,34 @@ NOIZZZE.Audio = (function () {
       sourceObject[name] = undefined;
       
     };
+    
+    /**
+     *
+     *
+     */
+    me.showControls = function(musicFileElement) {
+      
+      var musicPanel = musicFileElement.children('.musicFilePanel');
+      
+      if (musicPanel.hasClass('hidden')) {
+        musicPanel.removeClass('hidden');
+      } else {
+        musicPanel.addClass('hidden');
+      }
+
+    };
+    
+    /**
+     * NOIZZZE.Audio.adjustVolume
+     *
+     */
+    me.adjustVolume = function(volume, name) {
+      
+      var gainNode = gainObject[name];
+      
+      gainNode.gain.value = volume;
+      
+    }
 
     /**
      * NOIZZZE.Audio.update
@@ -117,9 +166,9 @@ NOIZZZE.Audio = (function () {
     me.update = function (operation, element) {
 
       if (operation === 'add') {
-        me.play(element.text());
+        me.play(element.attr('id'));
       } else {
-        me.stop(element.text());
+        me.stop(element.attr('id'));
       }
 
     };
@@ -268,12 +317,64 @@ NOIZZZE.Drag = (function () {
      */
     me.enableDrag = function () {
 
-      $('.musicFile:not(".ui-draggable")').draggable({revert: 'invalid',
-                                                      snap: '#soundBox',
-                                                      snapMode: 'inner'});
+      var newElement = $('.musicFile:not(".ui-draggable")'),
+          musicPanel = newElement.find('.musicFilePanel');
+
+      newElement.draggable({revert: 'invalid',
+                            snap: '#soundBox',
+                            snapMode: 'inner'});
+      
+      musicPanel.find('.volumeControl').slider({
+        min: 0,
+        max: 100,
+        value: 50,
+        slide: function (event, ui) { },
+      });
+      musicPanel.find('.delayControl').slider({
+  			orientation: "vertical",
+  			range: "min",
+  			min: 0,
+  			max: 100,
+  			value: 0,
+  			slide: function( event, ui ) { }
+  		});
+  		musicPanel.find('.warpControl').slider({
+  			orientation: "vertical",
+  			range: "min",
+  			min: 0,
+  			max: 100,
+  			value: 0,
+  			slide: function( event, ui ) { }
+  		});
 
     };
 
+    return me;
+
+}());
+
+
+/**
+ * NOIZZZE.Init
+ *
+ */
+NOIZZZE.Init = (function () {
+
+    var me = {};
+    
+    /**
+     * NOIZZZE.Init.setup
+     * 
+     *
+     */
+    me.setup = function () {
+      
+      $(document).on('click', '.musicFile', function(e) {
+        NOIZZZE.Audio.showControls($(this));
+      });
+      
+    };
+    
     return me;
 
 }());
@@ -284,6 +385,7 @@ $(function () {
   NOIZZZE.Drag.setup();
   NOIZZZE.Canvas.setup();
   NOIZZZE.Audio.setup();
+  NOIZZZE.Init.setup();
 
 });
 
