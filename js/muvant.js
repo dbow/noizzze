@@ -41,13 +41,18 @@ MUVANT.Audio = (function () {
       }
 
     };
-    
+
+    /**
+     * MUVANT.Audio.loadSound
+     * 
+     */
     me.loadSound = function (soundUrl, context) {
 
       var request = new XMLHttpRequest();
 
       request.open('GET', soundUrl, true);
       request.responseType = 'arraybuffer';
+
       // Decode asynchronously
       request.onload = function() {
         context.decodeAudioData(request.response, function(buffer) {
@@ -59,7 +64,11 @@ MUVANT.Audio = (function () {
       request.send();
 
     };
-    
+
+    /**
+     * MUVANT.Audio.handleBuffer
+     * 
+     */
     me.handleBuffer = function (buffer, name) {
 
       var newElement = '<div class="musicFile">' + name + '</div>';
@@ -69,32 +78,50 @@ MUVANT.Audio = (function () {
       MUVANT.Drag.enableDrag();
 
     };
-    
+
+    /**
+     * MUVANT.Audio.play
+     * 
+     */
     me.play = function(name) {
 
       var buffer = bufferObject[name],
-          source = context.createBufferSource(); // creates a sound source
+          source;
 
-      source.buffer = buffer;                    // tell the source which sound to play
-      source.connect(context.destination);       // connect the source to the context's destination (the speakers)
-      source.noteOn(0);                          // play the source now
-      sourceObject[name] = source;
+      if (!sourceObject[name]) {
+        source = context.createBufferSource();
+        source.buffer = buffer;
+        source.connect(context.destination);
+        source.noteOn(0);
+        sourceObject[name] = source;
+      }
 
     };
-    
+
+    /**
+     * MUVANT.Audio.stop
+     * 
+     */
     me.stop = function(name) {
       
       var source = sourceObject[name];
       source.noteOff(0);
+      sourceObject[name] = undefined;
       
     };
-    
+
+    /**
+     * MUVANT.Audio.update
+     * 
+     */
     me.update = function (operation, element) {
+
       if (operation === 'add') {
         me.play(element.text());
       } else {
         me.stop(element.text());
       }
+
     };
 
     return me;
