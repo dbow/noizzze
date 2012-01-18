@@ -24,7 +24,7 @@ MUVANT.Canvas = (function () {
             addCtx = addCanvas.getContext('2d'),
             removeCtx = removeCanvas.getContext('2d');
 
-        addCtx.fillStyle = "black";        
+        addCtx.fillStyle = 'black';        
         addCtx.beginPath();
         addCtx.moveTo(30, 50);
         addCtx.lineWidth = 8;
@@ -35,7 +35,7 @@ MUVANT.Canvas = (function () {
         addCtx.lineTo(5, 20);
         addCtx.stroke();
 
-        removeCtx.fillStyle = "black";        
+        removeCtx.fillStyle = 'black';        
         removeCtx.beginPath();
         removeCtx.moveTo(0, 5);
         removeCtx.lineWidth = 8;
@@ -72,50 +72,82 @@ MUVANT.Canvas = (function () {
 
 
 /**
- * MUVANT.Init
- * 
+ * MUVANT.Drag
+ * Sets up and handles the drag and drop functionality.
  */
-MUVANT.Init = (function () {
+MUVANT.Drag = (function () {
 
     var me = {};
     
-    me.updateDrag = function (element) {
-      if (element.hasClass('musicFileAdded')) {
-        element.draggable("option", "revert", false)
-               .draggable("option", "snap", false);
-      } else {
-        element.draggable("option", "revert", "invalid")
-               .draggable("option", "snap", "#soundBox")
-               .draggable("option", "snapMode", "inner");
-      }
-    }
-
     /**
-     * MUVANT.Init.setupDraggable
+     * MUVANT.Drag.setupDraggable
      * Initializes the draggable and droppable jQuery UI functionality
-     * on the soundBox and removeBox.
+     * on the musicFile elements and soundbox.
      */
     me.setupDraggable = function () {
 
-      $('.musicFile').draggable({revert: "invalid",
-                                 snap: "#soundBox",
-                                 snapMode: "inner"});
+      $('.musicFile').draggable({revert: 'invalid',
+                                 snap: '#soundBox',
+                                 snapMode: 'inner'});
 
       $('#soundBox').droppable({
-        hoverClass: "soundBoxHover",
+        hoverClass: 'soundBoxHover',
         tolerance: 'touch',
   			drop: function(event, ui) {
     		  ui.draggable.addClass('musicFileAdded');
     		  me.updateDrag(ui.draggable);
+    		},
+    		out: function(event, ui) {
+    		  ui.draggable.removeClass('musicFileAdded');
+    		  // watchForExit checks if the element has the musicFileAdded class
+    		  // when it is eventually dropped somewhere. Because the drop function
+    		  // above appears to be called before the dragstop one, it handles the
+    		  // case where you drag something out but re-add it to the soundBox.
+    		  me.watchForExit(ui.draggable);
     		}
   		});
-  		/*
-      $('#addBox').droppable({
-        hoverClass: "soundBoxHover",
-  			drop: function(event, ui) {
-    			log(ui);
-    		}
-  		});*/
+
+    };
+
+    /**
+     * MUVANT.Drag.watchForExit
+     * Checks if the file ends up in the soundBox or not.  If not,
+     * calls updateDrag on the element.
+     */
+    me.watchForExit = function (element) {
+
+      element.on("dragstop", function(event, ui) {
+
+        var dragElement = ui.helper;
+
+        if (!dragElement.hasClass('musicFileAdded')) {
+          me.updateDrag(dragElement);
+        }
+
+      });
+
+    };
+
+    /**
+     * MUVANT.Drag.updateDrag
+     * Updates the element's draggable and positioning based on whether
+     * it's in the soundBox or not.
+     */
+    me.updateDrag = function (element) {
+
+      if (element.hasClass('musicFileAdded')) {
+        element.draggable('option', 'revert', false)
+               .draggable('option', 'snap', false);
+      } else {
+        element.draggable('option', 'revert', 'invalid')
+               .draggable('option', 'snap', '#soundBox')
+               .draggable('option', 'snapMode', 'inner')
+               .css('position', 'static')
+               .css('top', 'auto')
+               .css('left', 'auto')
+               .css('position', 'relative');
+      }
+
     };
 
     return me;
@@ -125,7 +157,7 @@ MUVANT.Init = (function () {
 
 $(function () {
 
-  MUVANT.Init.setupDraggable();
+  MUVANT.Drag.setupDraggable();
   MUVANT.Canvas.setup();
 
 });
