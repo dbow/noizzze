@@ -9,7 +9,15 @@ var MUVANT = {};
  */
 MUVANT.Audio = (function () {
 
-    var me = {};
+    var me = {},
+        context,
+        soundArray,
+        soundArray = ['crickets.mp3',
+                      'airplane.mp3',
+                      'elementary_school.mp3',
+                      'chill_song.mp3'],
+        soundLen = soundArray.length,
+        bufferObject = {};
 
     /**
      * MUVANT.Audio.setup
@@ -17,51 +25,65 @@ MUVANT.Audio = (function () {
      */
     me.setup = function () {
       
-      var context,
-          testUrl = 'crickets.mp3',
-          request;
-      
       try {
         context = new webkitAudioContext();
       }
       catch(e) {
         // TODO(dbow): better error handling as this is real browser specific.
         alert('Web Audio API is not supported in this browser');
+        return;
       }
       
       // TODO(dbow): After testing complete, update with real functionality.
-
-      var playSound = function (buffer) {
-        log('playSound');
-        var source = context.createBufferSource(); // creates a sound source
-        source.buffer = buffer;                    // tell the source which sound to play
-        source.connect(context.destination);       // connect the source to the context's destination (the speakers)
-        source.noteOn(0);                          // play the source now
+      for (var i=0; i < soundLen; i++) {
+        me.loadSound(soundArray[i], context);
       }
-      log(context);
-      request = new XMLHttpRequest();
-      request.open('GET', testUrl, true);
-      request.responseType = 'arraybuffer';
 
+    };
+    
+    me.loadSound = function (soundUrl, context) {
+
+      var request = new XMLHttpRequest();
+
+      request.open('GET', soundUrl, true);
+      request.responseType = 'arraybuffer';
       // Decode asynchronously
       request.onload = function() {
-        log('request.onload');
-        log(request.response);
         context.decodeAudioData(request.response, function(buffer) {
-          log('decodeAudioData');
-          playSound(buffer);
-        }, function(e) {
-          log(e);
+          me.handleBuffer(buffer, soundUrl);
+          }, function(e) {
+            log(e);
         });
       }
-
       request.send();
 
     };
     
+    me.handleBuffer = function (buffer, name) {
+
+      var newElement = '<div class="musicFile">' + name + '</div>';
+
+      bufferObject[name] = buffer;
+      $('#addBox').append(newElement);
+      MUVANT.Drag.enableDrag();
+
+    };
+    
+    me.play = function(name) {
+
+      var buffer = bufferObject[name],
+          source = context.createBufferSource(); // creates a sound source
+
+      source.buffer = buffer;                    // tell the source which sound to play
+      source.connect(context.destination);       // connect the source to the context's destination (the speakers)
+      source.noteOn(0);                          // play the source now
+
+    };
+    
     me.update = function (operation, element) {
-      log(operation);
-      log(element);
+      if (operation === 'add') {
+        me.play(element.text());
+      }
     };
 
     return me;
@@ -139,10 +161,6 @@ MUVANT.Drag = (function () {
      */
     me.setup = function () {
 
-      $('.musicFile').draggable({revert: 'invalid',
-                                 snap: '#soundBox',
-                                 snapMode: 'inner'});
-
       $('#soundBox').droppable({
         hoverClass: 'soundBoxHover',
         tolerance: 'touch',
@@ -203,6 +221,18 @@ MUVANT.Drag = (function () {
                .css('position', 'relative');
         MUVANT.Audio.update('remove', element);
       }
+
+    };
+    
+    /**
+     *
+     *
+     */
+    me.enableDrag = function () {
+
+      $('.musicFile:not(".ui-draggable")').draggable({revert: 'invalid',
+                                                      snap: '#soundBox',
+                                                      snapMode: 'inner'});
 
     };
 

@@ -74,11 +74,10 @@ header div {
       float: left;
       border: 1px solid #999;
       background-color: #FFFFCC;
-      height: 30px;
-      width: 60px;
       text-align: center;
       margin: 3px;
       cursor: pointer;
+      padding: 5px;
     }
 
       .musicFileAdded {
