@@ -42,6 +42,29 @@
 			<h4>drag files here to <span class="mainInstruction">Add</span> or <span class="mainInstruction">Remove</span></h4>
 			<div id="addBox"></div>
 		</div>
+		
+		<!-- This template HTML is used in the JS to create the music panels. -->
+		<div id="musicPanelTemplate">
+			<div class="musicFilePanel hidden">
+	            <h2></h2>
+	            <div class="controls1">
+			        <div class="loopControlContainer">
+		             	<input type="checkbox" />&nbsp;loop</div> 
+		            <div class="volumeControlContainer">
+		            	<canvas class="volumeIcon" width="15" height="15"></canvas>
+		            	<div class="volumeControl"></div>
+		            </div>
+	            </div>
+	            <div class="controls2">
+	            	<div class="delayControlContainer">
+	               		<div class="delayControl"></div>
+	             	</div>
+	             	<div class="warpControlContainer">
+	                	<div class="warpControl"></div>
+	             	</div>
+	           </div>
+	        </div>
+		</div>
 
 	</div>
 	<footer>

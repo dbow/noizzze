@@ -134,3 +134,7 @@ header div {
         .warpControl {
           height: 40px;
         }
+
+#musicPanelTemplate {
+  display: none;
+}

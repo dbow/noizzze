@@ -74,22 +74,13 @@ NOIZZZE.Audio = (function () {
      */
     me.handleBuffer = function (buffer, name) {
 
-      var panelElement = '<div class="musicFilePanel hidden">' + 
-                           '<h2>' + name + '</h2>' +
-                           '<div class="controls1">' +
-                             '<div class="loopControl"><input type="checkbox" />&nbsp;loop</div>' + 
-                             '<div class="volumeControl"></div>' +
-                           '</div>' +
-                           '<div class="controls2">' +
-                             '<div class="delayControl"></div>' +
-                             '<div class="warpControl"></div>' +
-                          '</div>' +
-                        '</div>',
+      var panelElement = $('#musicPanelTemplate').html(),
           newElement = '<div class="musicFile" id="' + name + '">' +
-                       name + panelElement + '</div>';
+                        name + panelElement + '</div>';
 
-
-      $('#addBox').append(newElement);
+      $(newElement).find('h2').text(name)
+                   .parents('.musicFile')
+                   .appendTo('#addBox');
       NOIZZZE.Drag.enableDrag();
 
     };
