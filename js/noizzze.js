@@ -81,6 +81,7 @@ NOIZZZE.Audio = (function () {
       $(newElement).find('h2').text(name)
                    .parents('.musicFile')
                    .appendTo('#addBox');
+      NOIZZZE.Canvas.createAudioIcons();
       NOIZZZE.Drag.enableDrag();
 
     };
@@ -217,6 +218,50 @@ NOIZZZE.Canvas = (function () {
         log('no canvas');
       }
       
+    };
+
+    /**
+     *
+     *
+     */
+    me.createAudioIcons = function () {
+
+      var audioIcons = document.getElementsByClassName('volumeIcon'),
+          iconLen = audioIcons.length,
+          icon;
+
+      for (var i=0; i < iconLen; i++) {
+        icon = audioIcons[i].getContext('2d');  // 0 --> 20px (x)
+                                                // |
+                                                // 20px (y)
+        icon.beginPath();
+        icon.fillRect(0, 7, 4, 6);
+        icon.lineWidth = 1;
+        icon.moveTo(4, 7);
+        icon.lineTo(9, 0);
+        icon.lineTo(9, 20);
+        icon.lineTo(4, 13);
+        icon.stroke();
+        icon.beginPath();
+        icon.arc(0, 10, 13, me.convertRadians(345), me.convertRadians(20));
+        icon.stroke();
+        icon.beginPath();
+        icon.arc(0, 10, 16, me.convertRadians(335), me.convertRadians(30));
+        icon.stroke();
+        icon.beginPath();
+        icon.arc(0, 10, 19, me.convertRadians(325), me.convertRadians(40));
+        icon.stroke();
+        
+      }
+
+    };
+    
+    me.convertRadians = function (degrees) {
+
+      var radians = (Math.PI/180) * degrees;
+
+      return radians;
+
     };
 
     return me;
@@ -362,6 +407,11 @@ NOIZZZE.Init = (function () {
       
       $(document).on('click', '.musicFile', function(e) {
         NOIZZZE.Audio.showControls($(this));
+      });
+      
+      $(document).on('click', '.loopControlContainer', function (e) {
+        log('clicked loop!');
+        e.stopPropagation();
       });
       
     };

@@ -109,31 +109,67 @@ header div {
         float: left;
       }
 
-        .loopControl {
-          width: 60px;
+        .loopControlContainer {
+          width: 45px;
+          margin: 0px 0px 0px 5px;
         }
-      
-        .volumeControl {
-          width: 90px;
+
+        .volumeControlContainer canvas,
+        .volumeControlContainer div {
+          float: left;
         }
+
+          .volumeIcon {
+            width: 20px;
+            height: 20px;
+            margin: -3px 8px 0px 10px;
+          }
+
+          .volumeControl {
+            width: 75px;
+            margin-top: 2px;
+          }
+
+        
       
       .controls2 {
         height: 100px;
         width: 180px;
       }
 
-      .controls2 div {
+      .controls2 .delayControlContainer,
+      .controls2 .warpControlContainer {
         display: block;
         margin: 10px auto;
+        height: 50px;
+        width: 75px;
       }
+
+        .delayControlContainer div {
+          float: left;
+        }
 
         .delayControl {
           height: 40px;
         }
-      
+
+      .warpControlContainer {
+        clear: both;
+      }
+
+        .warpControlContainer div {
+          float: left;
+        }
+
         .warpControl {
           height: 40px;
         }
+
+      .controlLabel {
+        font-size: 16px;
+        font-weight: bold;
+        padding: 15px 0px 0px 15px;
+      }
 
 #musicPanelTemplate {
   display: none;
