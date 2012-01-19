@@ -167,12 +167,12 @@ NOIZZZE.Audio = (function () {
 
       var convertedId = NOIZZZE.Init.convertIdToName(element.attr('id'));
       
-      log(operation + ' ' + convertedId);
-      
       if (operation === 'add') {
         me.play(convertedId);
       } else {
-        me.stop(convertedId);
+        if (sourceObject[convertedId]) {
+          me.stop(convertedId);
+        }
       }
 
     };
@@ -305,6 +305,11 @@ NOIZZZE.Drag = (function () {
     		},
     		out: function(event, ui) {
     		  ui.draggable.removeClass('musicFileAdded');
+
+    		  // removes any previous dragstop event handler in case user drags
+    		  // object in and out multiple times before dropping.
+    		  ui.draggable.off('dragstop');
+
     		  // watchForExit checks if the element has the musicFileAdded class
     		  // when it is eventually dropped somewhere. Because the drop function
     		  // above appears to be called before the dragstop one, it handles the
@@ -328,8 +333,9 @@ NOIZZZE.Drag = (function () {
 
         if (!dragElement.hasClass('musicFileAdded')) {
           me.updateDrag(dragElement);
-          element.off('dragstop');
         }
+        
+        element.off('dragstop');
 
       });
 
@@ -399,6 +405,7 @@ NOIZZZE.Drag = (function () {
 
         },
       });
+
       musicPanel.find('.delayControl').slider({
   			orientation: "vertical",
   			range: "min",
@@ -409,16 +416,17 @@ NOIZZZE.Drag = (function () {
   			  log(ui.value);
   			}
   		});
-  		musicPanel.find('.warpControl').slider({
-  			orientation: "vertical",
-  			range: "min",
-  			min: 0,
-  			max: 100,
-  			value: 0,
-  			slide: function( event, ui ) {
-  			  log(ui.value);
-  			}
-  		});
+
+      musicPanel.find('.warpControl').slider({
+        orientation: "vertical",
+      	range: "min",
+      	min: 0,
+      	max: 100,
+      	value: 0,
+      	slide: function( event, ui ) {
+      	  log(ui.value);
+      	}
+      });
       
     };
     
