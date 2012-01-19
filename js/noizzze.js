@@ -75,7 +75,8 @@ NOIZZZE.Audio = (function () {
     me.handleBuffer = function (buffer, name) {
 
       var panelElement = $('#musicPanelTemplate').html(),
-          newElement = '<div class="musicFile" id="' + name + '">' +
+          convertedName = NOIZZZE.Init.convertNameToId(name),
+          newElement = '<div class="musicFile" id="' + convertedName + '">' +
                         name + panelElement + '</div>';
 
       $(newElement).find('h2').text(name)
@@ -94,10 +95,13 @@ NOIZZZE.Audio = (function () {
 
       var buffer = bufferObject[name],
           source,
-          gainNode;
+          gainNode,
+          convertedName = NOIZZZE.Init.convertNameToId(name),
+          element = $('#' + convertedName),
+          currentGain = element.find('.volumeControl').slider('value') / 100,
+          currentDelay = element.find('.delayControl').slider('value'),
+          currentWarp = element.find('.warpControl').slider('value');
 
-      log(name);
-      log(sourceObject);
       if (!sourceObject[name]) {
         source = context.createBufferSource();
         source.buffer = buffer;
@@ -105,6 +109,7 @@ NOIZZZE.Audio = (function () {
         gainObject[name] = gainNode;
         source.connect(gainNode);
         gainNode.connect(context.destination);
+        gainNode.gain.value = currentGain;
         source.noteOn(0);
         sourceObject[name] = source;
       }
@@ -132,6 +137,7 @@ NOIZZZE.Audio = (function () {
       var musicPanel = musicFileElement.children('.musicFilePanel');
       
       if (musicPanel.hasClass('hidden')) {
+        $('.musicFilePanel:visible').addClass('hidden');
         musicPanel.removeClass('hidden');
       } else {
         musicPanel.addClass('hidden');
@@ -147,9 +153,11 @@ NOIZZZE.Audio = (function () {
       
       var gainNode = gainObject[name];
       
-      gainNode.gain.value = volume;
-      
-    }
+      if (gainNode) {
+        gainNode.gain.value = volume;
+      }
+            
+    };
 
     /**
      * NOIZZZE.Audio.update
@@ -157,10 +165,14 @@ NOIZZZE.Audio = (function () {
      */
     me.update = function (operation, element) {
 
+      var convertedId = NOIZZZE.Init.convertIdToName(element.attr('id'));
+      
+      log(operation + ' ' + convertedId);
+      
       if (operation === 'add') {
-        me.play(element.attr('id'));
+        me.play(convertedId);
       } else {
-        me.stop(element.attr('id'));
+        me.stop(convertedId);
       }
 
     };
@@ -342,11 +354,13 @@ NOIZZZE.Drag = (function () {
                .css('top', 'auto')
                .css('left', 'auto')
                .css('position', 'relative');
+        me.resetSliders(element);
+        element.find('.musicFilePanel').addClass('hidden');
         NOIZZZE.Audio.update('remove', element);
       }
 
     };
-    
+
     /**
      *
      *
@@ -360,11 +374,30 @@ NOIZZZE.Drag = (function () {
                             snap: '#soundBox',
                             snapMode: 'inner'});
       
+      me.setupSliders(musicPanel);
+
+
+    };
+    
+    /**
+     *
+     *
+     */
+    me.setupSliders = function (musicPanel) {
+      
       musicPanel.find('.volumeControl').slider({
         min: 0,
         max: 100,
         value: 50,
-        slide: function (event, ui) { },
+        slide: function (event, ui) {
+
+          var newVolume = ui.value/100,
+              musicFileId = $(ui.handle).parents('.musicFile').attr('id'),
+              convertedId = NOIZZZE.Init.convertIdToName(musicFileId);
+
+          NOIZZZE.Audio.adjustVolume(newVolume, convertedId);
+
+        },
       });
       musicPanel.find('.delayControl').slider({
   			orientation: "vertical",
@@ -372,7 +405,9 @@ NOIZZZE.Drag = (function () {
   			min: 0,
   			max: 100,
   			value: 0,
-  			slide: function( event, ui ) { }
+  			slide: function( event, ui ) {
+  			  log(ui.value);
+  			}
   		});
   		musicPanel.find('.warpControl').slider({
   			orientation: "vertical",
@@ -380,9 +415,23 @@ NOIZZZE.Drag = (function () {
   			min: 0,
   			max: 100,
   			value: 0,
-  			slide: function( event, ui ) { }
+  			slide: function( event, ui ) {
+  			  log(ui.value);
+  			}
   		});
-
+      
+    };
+    
+    /**
+     *
+     *
+     */
+    me.resetSliders = function (musicPanel) {
+      
+      musicPanel.find('.volumeControl').slider('option', 'value', 50);
+      musicPanel.find('.delayControl').slider('option', 'value', 0);
+      musicPanel.find('.warpControl').slider('option', 'value', 0);
+      
     };
 
     return me;
@@ -414,7 +463,35 @@ NOIZZZE.Init = (function () {
         e.stopPropagation();
       });
       
+      $(document).on('click', '.musicFile, .musicFilePanel', function(e) {
+        e.stopPropagation();
+      });
+      
+      $(document).on('click', function(e) {
+        $('.musicFilePanel:visible').addClass('hidden');
+      });  
+      
     };
+    
+    /**
+     * NOIZZZE.Init.convertNameToId
+     *
+     */
+    me.convertNameToId = function (name) {
+      
+      return name.replace('.', '--dot--');
+      
+    }
+
+    /**
+     * NOIZZZE.Init.convertIdToName
+     *
+     */
+    me.convertIdToName = function (id) {
+      
+      return id.replace('--dot--', '.');
+      
+    }
     
     return me;
 

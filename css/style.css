@@ -85,7 +85,7 @@ header div {
       }
     
     .musicFilePanel {
-      width: 180px;
+      min-width: 180px;
       height: 200px;
       border: 1px solid #333;
       position: absolute;
@@ -99,10 +99,16 @@ header div {
       .hidden {
         display: none;
       }
+
+      .musicFilePanel h2 {
+        margin-left: 5px;
+        margin-right: 5px;
+      }
       
       .controls1 {
         height: 20px;
         width: 180px;
+        margin: 0 auto;
       }
 
       .controls1 div {
@@ -135,6 +141,7 @@ header div {
       .controls2 {
         height: 100px;
         width: 180px;
+        margin: 0 auto;
       }
 
       .controls2 .delayControlContainer,
