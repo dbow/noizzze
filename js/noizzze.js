@@ -77,7 +77,7 @@ NOIZZZE.Audio = (function () {
       var panelElement = '<div class="musicFilePanel hidden">' + 
                            '<h2>' + name + '</h2>' +
                            '<div class="controls1">' +
-                             '<input type="checkbox" class="loopControl">loop</input>' + 
+                             '<div class="loopControl"><input type="checkbox" />&nbsp;loop</div>' + 
                              '<div class="volumeControl"></div>' +
                            '</div>' +
                            '<div class="controls2">' +

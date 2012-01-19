@@ -101,16 +101,16 @@ header div {
       }
       
       .controls1 {
-        height: 50px;
+        height: 20px;
         width: 180px;
       }
 
-      .controls1 input, .controls1 div {
+      .controls1 div {
         float: left;
       }
 
         .loopControl {
-          width: 90px;
+          width: 60px;
         }
       
         .volumeControl {
@@ -124,12 +124,13 @@ header div {
 
       .controls2 div {
         display: block;
+        margin: 10px auto;
       }
 
         .delayControl {
-          height: 50px;
+          height: 40px;
         }
       
         .warpControl {
-          height: 50px;
+          height: 40px;
         }
