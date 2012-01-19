@@ -37,7 +37,7 @@ NOIZZZE.Audio = (function () {
         return;
       }
       
-      // TODO(dbow): After testing complete, update with real functionality.
+      // TODO(dbow): Decide where sounds come from and how many to load.
       for (var i=0; i < soundLen; i++) {
         me.loadSound(soundArray[i], context);
       }
@@ -83,7 +83,7 @@ NOIZZZE.Audio = (function () {
                    .parents('.musicFile')
                    .appendTo('#addBox');
       NOIZZZE.Canvas.createAudioIcons();
-      NOIZZZE.Drag.enableDrag();
+      NOIZZZE.Interaction.enableDrag();
 
     };
 
@@ -129,7 +129,7 @@ NOIZZZE.Audio = (function () {
     };
     
     /**
-     *
+     * NOIZZZE.Audio.showControls
      *
      */
     me.showControls = function(musicFileElement) {
@@ -184,7 +184,7 @@ NOIZZZE.Audio = (function () {
 
 /**
  * NOIZZZE.Canvas
- * Constructs the arrows in the UI using HTML5 Canvas.
+ * Constructs the UI elements that use HTML5 Canvas.
  */
 NOIZZZE.Canvas = (function () {
 
@@ -233,41 +233,50 @@ NOIZZZE.Canvas = (function () {
     };
 
     /**
-     *
+     * NOIZZZE.Canvas.createAudioIcons
      *
      */
     me.createAudioIcons = function () {
 
-      var audioIcons = document.getElementsByClassName('volumeIcon'),
-          iconLen = audioIcons.length,
-          icon;
+      if (Modernizr.canvas) {
 
-      for (var i=0; i < iconLen; i++) {
-        icon = audioIcons[i].getContext('2d');  // 0 --> 20px (x)
-                                                // |
-                                                // 20px (y)
-        icon.beginPath();
-        icon.fillRect(0, 7, 4, 6);
-        icon.lineWidth = 1;
-        icon.moveTo(4, 7);
-        icon.lineTo(9, 0);
-        icon.lineTo(9, 20);
-        icon.lineTo(4, 13);
-        icon.stroke();
-        icon.beginPath();
-        icon.arc(0, 10, 13, me.convertRadians(345), me.convertRadians(20));
-        icon.stroke();
-        icon.beginPath();
-        icon.arc(0, 10, 16, me.convertRadians(335), me.convertRadians(30));
-        icon.stroke();
-        icon.beginPath();
-        icon.arc(0, 10, 19, me.convertRadians(325), me.convertRadians(40));
-        icon.stroke();
-        
+        var audioIcons = document.getElementsByClassName('volumeIcon'),
+            iconLen = audioIcons.length,
+            icon;
+
+        for (var i=0; i < iconLen; i++) {
+          icon = audioIcons[i].getContext('2d');  // 0 --> 20px (x)
+                                                  // |
+                                                  // 20px (y)
+          icon.beginPath();
+          icon.fillRect(0, 7, 4, 6);
+          icon.lineWidth = 1;
+          icon.moveTo(4, 7);
+          icon.lineTo(9, 0);
+          icon.lineTo(9, 20);
+          icon.lineTo(4, 13);
+          icon.stroke();
+          icon.beginPath();
+          icon.arc(0, 10, 13, me.convertRadians(345), me.convertRadians(20));
+          icon.stroke();
+          icon.beginPath();
+          icon.arc(0, 10, 16, me.convertRadians(335), me.convertRadians(30));
+          icon.stroke();
+          icon.beginPath();
+          icon.arc(0, 10, 19, me.convertRadians(325), me.convertRadians(40));
+          icon.stroke();
+        }
+
+      } else {
+        log('no canvas');
       }
 
     };
-    
+
+    /**
+     * NOIZZZE.Canvas.convertRadians
+     *
+     */
     me.convertRadians = function (degrees) {
 
       var radians = (Math.PI/180) * degrees;
@@ -282,17 +291,16 @@ NOIZZZE.Canvas = (function () {
 
 
 /**
- * NOIZZZE.Drag
+ * NOIZZZE.Interaction
  * Sets up and handles the drag and drop functionality.
  */
-NOIZZZE.Drag = (function () {
+NOIZZZE.Interaction = (function () {
 
     var me = {};
     
     /**
-     * NOIZZZE.Drag.setupDraggable
-     * Initializes the draggable and droppable jQuery UI functionality
-     * on the musicFile elements and soundbox.
+     * NOIZZZE.Interaction.setup
+     * 
      */
     me.setup = function () {
 
@@ -321,7 +329,7 @@ NOIZZZE.Drag = (function () {
     };
 
     /**
-     * NOIZZZE.Drag.watchForExit
+     * NOIZZZE.Interaction.watchForExit
      * Checks if the file ends up in the soundBox or not.  If not,
      * calls updateDrag on the element.
      */
@@ -342,7 +350,7 @@ NOIZZZE.Drag = (function () {
     };
 
     /**
-     * NOIZZZE.Drag.updateDrag
+     * NOIZZZE.Interaction.updateDrag
      * Updates the element's draggable and positioning based on whether
      * it's in the soundBox or not.
      */
@@ -368,7 +376,7 @@ NOIZZZE.Drag = (function () {
     };
 
     /**
-     *
+     * NOIZZZE.Interaction.enableDrag
      *
      */
     me.enableDrag = function () {
@@ -382,11 +390,10 @@ NOIZZZE.Drag = (function () {
       
       me.setupSliders(musicPanel);
 
-
     };
     
     /**
-     *
+     * NOIZZZE.Interaction.setupSliders
      *
      */
     me.setupSliders = function (musicPanel) {
@@ -413,6 +420,7 @@ NOIZZZE.Drag = (function () {
   			max: 100,
   			value: 0,
   			slide: function( event, ui ) {
+  			  // TODO(dbow): Add delay handler.
   			  log(ui.value);
   			}
   		});
@@ -424,6 +432,7 @@ NOIZZZE.Drag = (function () {
       	max: 100,
       	value: 0,
       	slide: function( event, ui ) {
+      	  // TODO(dbow); Add warp handler.
       	  log(ui.value);
       	}
       });
@@ -431,7 +440,7 @@ NOIZZZE.Drag = (function () {
     };
     
     /**
-     *
+     * NOIZZZE.Interaction.resetSliders
      *
      */
     me.resetSliders = function (musicPanel) {
@@ -468,16 +477,18 @@ NOIZZZE.Init = (function () {
       
       $(document).on('click', '.loopControlContainer', function (e) {
         log('clicked loop!');
+        // TODO(dbow): Add loop handler.
         e.stopPropagation();
       });
-      
+
+      // Clicking anywhere on the page closes open musicFilePanels.
+      $(document).on('click', function(e) {
+        $('.musicFilePanel:visible').addClass('hidden');
+      });
+      // Except clicking on a musicFile or musicFilePanel.
       $(document).on('click', '.musicFile, .musicFilePanel', function(e) {
         e.stopPropagation();
       });
-      
-      $(document).on('click', function(e) {
-        $('.musicFilePanel:visible').addClass('hidden');
-      });  
       
     };
     
@@ -508,7 +519,7 @@ NOIZZZE.Init = (function () {
 
 $(function () {
 
-  NOIZZZE.Drag.setup();
+  NOIZZZE.Interaction.setup();
   NOIZZZE.Canvas.setup();
   NOIZZZE.Audio.setup();
   NOIZZZE.Init.setup();
